@@ -1,0 +1,323 @@
+
+
+/**
+    
+    351491895@qq.com */
+<html>
+    <title>FOR BEST HER</title>
+    <style> .tj{ width: 100px; height: 20px; } 
+    </style> 明显淡化点击按钮淡化爱心函数
+
+    <script type="text/javascript"> 
+        var paint = document.getElementById("bu"); 
+        var ctx = paint.getContext("2d"); var paint1 = document.getElementById("background"); 
+        var ctx1 = paint1.getContext("2d"); 
+        
+        /** * ctx用于画布1 
+        * ctx1用于画布2 
+        * 这两个为画笔，在画布上作画 */ 
+        
+        var img = document.getElementById("scream"); //img1即代表了画布二，整张画。 
+        var img1=document.getElementById("background"); 
+        var rayx = new Array(); var rayy = new Array(); 
+        var yx = new Array(); 
+        var yy = new Array(); 
+        var dipingxianh = new Array(); 
+        /** 
+        * ray的两个数组表示了流星的X,Y坐标 
+        * y 的两个数组装载了 萤火虫的X,Y坐标 
+        * 最后一个数组记录地平线的Y坐标 
+        */ 
+        var backx = 0; var backy = 0; 
+        /** * 用以管理背景星空的移动 
+        */ 
+        var a = 0; var b = 0; 
+        /** 
+        * a 表示爱心函数的变化值 
+        * b 表示时间，单位 帧 
+        */ var backh = "D";
+        //D,U,L,R 记录当前背景移动方向
+
+		var nowTime = 0;
+		var lastTime = Date.now();
+		var diffTime = 17;
+		/**
+		 * 以上三个变量，用以判断页面刷新间隔，此时为17毫秒刷新一次，即一秒60帧
+		 */
+		var tou = 0.5;
+		//爱心透明度调节
+		function imageyi() {//将小人画在画布上的函数
+			ctx.globalAlpha = 1;
+			ctx.drawImage(img, 300, 570, 270, 150);
+		}
+		function yi() { //背景第一个图层
+			var my_gradient1 = ctx.createLinearGradient(0,0,360, 3600);
+			my_gradient1.addColorStop(0, "#000033");
+			my_gradient1.addColorStop(0.3, "#000099");
+			my_gradient1.addColorStop(0.5, "#8080ff");
+			my_gradient1.addColorStop(0.7, "#5200cc");
+			my_gradient1.addColorStop(0.9, "#3366ff");
+			my_gradient1.addColorStop(1, "#330080");				
+			ctx1.globalAlpha =0.4;
+			ctx1.fillStyle = my_gradient1;
+			ctx1.fillRect(0, 0, 7200, 3600);
+		}
+		function er() {//第二个图层
+			var my_gradient2 = ctx.createLinearGradient(0, 0, 7200, 0);
+			my_gradient2.addColorStop(0, "#00001a");
+			my_gradient2.addColorStop(0.3, "#000066");
+			my_gradient2.addColorStop(0.5, "#0000b3");
+			my_gradient2.addColorStop(0.7, "#000066");
+			my_gradient2.addColorStop(1, "#00001a");				
+			ctx1.globalAlpha = 0.6;
+			ctx1.fillStyle = my_gradient2;
+			ctx1.fillRect(0, 0, 7200, 3600);
+		}
+		function san() {//背景的三个图层
+			var my_gradient3 = ctx.createLinearGradient(720,3600,0,0);
+			my_gradient3.addColorStop(0, " #cc33ff");
+			my_gradient3.addColorStop(0.3, "#ff8080");
+			my_gradient3.addColorStop(0.5, "#ff1a1a");
+			my_gradient3.addColorStop(0.7, "#b3b3ff");
+			my_gradient3.addColorStop(1, "#cc33ff");				
+			ctx1.globalAlpha = 1;
+			ctx1.fillStyle = my_gradient3;
+			ctx1.fillRect(0, 0, 7200, 3600);
+		}
+		function draw1() {//这个函数用以画出爱心，注意，画布左上为（0，0），向右，向下为正方向。
+			
+			ctx.lineWidth = 1.2;
+			ctx.strokeStyle = "red";
+			ctx.beginPath();
+			ctx.moveTo(900, 450);
+			var p = Math.PI;
+			for(var i = 0; i <= 5400; i++) {
+				x = i / 300;
+				a0 = Math.pow(x, 4 / 5);
+				a1 = Math.pow(x, 2);
+				a2 = Math.sqrt(a/2 - a1);
+				y = -0.8 * a0 - a2 * Math.sin(a * x * p);
+				ctx.lineTo(60 * x + 900, 60 * y + 450);
+			}
+			ctx.stroke();
+		}
+		function draw2() {	
+			ctx.lineWidth = 1.2;
+			ctx.strokeStyle = "red";
+			ctx.beginPath();
+			ctx.moveTo(900, 450);
+			var p = Math.PI;
+			for(var i = 0; i <= 5400; i++) {
+				x = i /300;
+				a0 = Math.pow(x, 4 / 5);
+				a1 = Math.pow(x, 2);
+				a2 = Math.sqrt(a/2 - a1);
+				y = -0.8 * a0 - a2 * Math.sin(-a * x * p);
+				ctx.lineTo(-60 * x + 900, 60 * y + 450);
+			};
+			ctx.stroke();
+		}			
+		function little_ray() {//画小星星
+			for(var j = 0; j <= 54000; j++) {
+				m = Math.round(7200 * Math.random());
+				n = Math.round(3600 * Math.random());						
+				ctx1.fillStyle = "white";
+				ctx1.globalAlpha = 1 ; 
+				ctx1.fillRect(m,n,2*Math.random()+0.7,2*Math.random()+0.7);
+			}
+		}		
+		function dipingxian() {
+			/**
+		    * 	记录地平线位置，画出静态草
+		    * 	用random刻画出草丛，如果不记录在数组中，下次又是随机的草，会发生鬼畜
+		     */
+			for(var k = 0; k <= 1800; k++) {
+				l1 = k / 150;
+				l = l1 * l1;
+				dipingxianh[k] = l + 700 - 15 * Math.random();
+				//ctx.globalAlpha = 1;
+				//ctx.fillStyle = "black";
+				//ctx.fillRect(k, l + 700 - 15 * Math.random(), 1, 600 - l);
+			}
+		}	
+		function draw_dipingxian(){//上面个函数记录在数组中后，这个函数进行不断画
+			for(var k = 0; k <= 1800; k++) {
+				l1 = k / 150;
+				l = l1 * l1;
+				ctx.globalAlpha = 1;
+				ctx.fillStyle = "black";
+				ctx.fillRect(k,dipingxianh[k], 1, 600 - l);
+			}
+		}
+		function other_ray() {//这个是黄色的，萤火虫
+			for(var j = 0; j <= 300; j++) {
+				m = Math.round(1800 * Math.random());
+				n = Math.round(100 * Math.random());
+				yx[j] = m ;
+				yy[j] = n +800 ;
+				//ctx.fillStyle = "#FFFF00";
+				//ctx.globalAlpha = 1;
+				//ctx.fillRect(m, n + 600, 2 * Math.random() + 1, 2 * Math.random() + 1);
+			}
+		}
+		function draw_other_ray1() {
+			for(var j = 0; j <= 300; j++) {
+				ctx.fillStyle = "#FFFF00";
+				ctx.globalAlpha = 1;
+				ctx.fillRect(yx[j], yy[j],  Math.random() + 1.5,  Math.random() + 1.5);
+			}
+		}
+		function draw_other_ray2() {
+			for(var j = 0; j <= 300; j++) {
+				ctx.fillStyle = "#FFFF00";
+				ctx.globalAlpha = 1;
+				ctx.fillRect(yx[j]-600, yy[j]-80,  Math.random() + 1.5,  Math.random() + 1.5);
+			}
+		}	
+		/**
+		 * 两个负责区域不同，为了便捷且画在草地上，将草地分割为两块矩形。
+		 */
+		function ray(){//流星的坐标生成
+			for(var i = 0 ; i < 20;i ++){
+				rayx[i] = Math.round(1800*Math.random());
+				rayy[i] = - Math.round(800*Math.random());
+			}
+		}			
+		function moveray(){//移动流星，每执行一次，流星动一下。位置进行循环，飞出画布后，传送到之前位置并随机调整位置，再次飞过屏幕。
+			for(var i = 0 ; i < 20;i ++){
+				rayx[i] = rayx[i] - 20;
+				rayy[i] = rayy[i] + 5;
+				if(rayx[i] <= -800){rayx[i] = rayx[i] +2600; rayy[i] = rayy[i] + 100*Math.random()-50}
+				if(rayy[i] >= 1100){rayy[i] = rayy[i] - 1100; rayx[i] = rayx[i] + 200*Math.random()-100}
+			}				
+		}
+		function moveback(){//背景的移动，原理类似流星，在背后的大场景来看，就是在下，右，上，左，不断循环移动
+			if(backx == 0 &&backy == 0){backh = "D";}
+			if(backx == 0 &&backy == 2700){backh = "R";}
+			if(backx == 5400 &&backy == 2700){backh = "U";}
+			if(backx == 5400 &&backy == 0){backh = "L";}
+			
+			if(backh == "D"){backy = backy + 2;}
+			if(backh == "U"){backy = backy - 2;}
+			if(backh == "R"){backx = backx + 2;}
+			if(backh == "L"){backx = backx - 2;}				
+		}
+		function drawray(){//这个是把流星现在的位置画在画布上
+				
+				for (var i = 0 ; i < 5 ; i ++) {
+					ctx.beginPath();
+					ctx.moveTo(rayx[i],rayy[i]);
+					ctx.lineTo(rayx[i]+840,rayy[i]-210); 
+					ctx.lineWidth = 5;
+					ctx.strokeStyle = "deepskyblue";
+				     ctx.lineCap = "round";
+				    ctx.globalAlpha = 0.2;
+				    ctx.stroke();
+					//拖尾
+					ctx.beginPath();
+					ctx.moveTo(rayx[i],rayy[i]);
+					ctx.lineTo(rayx[i]+800,rayy[i]-200); 
+					ctx.lineWidth = 3;
+					ctx.strokeStyle = "white";
+					ctx.lineCap="round";
+				    ctx.globalAlpha = 1;
+				    ctx.stroke();	
+				    //实体
+				}
+		}
+		main();
+		function init(){//初始化
+			san();
+			er();
+			yi();
+			//画出图层
+			ctx.globalAlpha = 1 ;
+			little_ray();
+			//画出星星
+			ray();	
+			//生成流星初始坐标
+			dipingxian();
+			//生成地平线坐标
+			other_ray();
+			//生成萤火虫的位置
+		}
+		function begin(){//这个函数让图片动起来，每执行一次函数，场景动一下，60帧高清
+			ctx.clearRect(0,0,1800,900);//清空画布	
+			ctx.globalAlpha = 1;
+  			ctx.drawImage(img1,backx,backy,1800,900,0,0,1800,900);//画星空
+  			drawray();//画流星
+			moveray();//移动流星坐标
+			ctx.drawImage(img, 300, 590, 270, 150);//画小人
+			draw_dipingxian();//画草地
+			draw_other_ray1();//画下面的萤火虫
+			draw_other_ray2();//画上面的萤火虫
+			moveback();//背景坐标移动
+			ctx.globalAlpha = tou;
+			draw1();//画出此时爱心函数
+			ctx.globalAlpha = tou;
+			draw2();
+			
+		}
+		function zi(){//两个字
+			var gradient=ctx.createLinearGradient(0,0,500,0);
+			gradient.addColorStop("0","white");
+			gradient.addColorStop("0.5","blue");
+			gradient.addColorStop("1.0","blue");
+			// Fill with gradient
+			ctx.fillStyle= gradient;
+			ctx.globalAlpha = 0.1;
+			ctx.font="500px Georgia";
+			ctx.fillText("I",300,600,1000);
+			ctx.fillText("U",1400,600,1000);
+		}
+		function mingxian(){
+			tou = tou +0.1;
+		}
+		function yincang(){
+			tou = tou - 0.1;
+			if (tou < 0 ){tou = 0}
+		}
+		function main(){//执行函数，总结函数。
+			init();	//初始化
+			
+			requestAnimationFrame(function step(){//这个函数就是刷新页面用的
+			nowTime = Date.now();
+			if(nowTime - lastTime >= diffTime  ){//判断时间间隔	
+				
+				
+			begin(); //不断刷新坐标并画出来   			
+			ctx.globalAlpha = 1 ;
+			b = b + 1;//判断现在时间
+			if( b >= 120 && b <= 780){a = a + 0.05; zi();}								
+			if(b >= 780 && b <= 870){a = a + 0.05; zi();}
+			if(b >= 870 ){a = a - 0.3;}		
+			if(b >= 990){b = 120}
+			
+			
+			lastTime = nowTime;				
+			};
+   			requestAnimationFrame(step);
+			});
+		}
+		//移动背景
+		//var img1=document.getElementById("background");
+		//ctx.drawImage(img1,900,300,2700,1100,0,0,1800,900);
+		//function move(){
+		//	for (var i = 0;i <= ) {
+		//					
+		//	}
+		//}
+		//function draw(ctx1){
+		//  requestAnimationFrame(function step(){
+		//  nowTime = Date.now();
+		//  if(nowTime - lastTime >= diffTime  ){	
+		//  				
+		//    		runmain(ctx1);
+		//  };
+		//     		requestAnimationFrame(step);
+		//  });
+		//}
+	</script>
+	
+</body>
+<html>
